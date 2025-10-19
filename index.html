@@ -14,11 +14,11 @@
       margin: 0;
       font-family: 'Press Start 2P', cursive;
       color: white;
-      background: url("bg.png") no-repeat center center fixed; /* ✅ Adjusted background to top */
+      background: url("bg.png") no-repeat center center fixed; 
       background-size: cover;
     }
 
-    #home, #gameContainer {
+    #home, #gameContainer, #mapSelect {
       text-align: center;
     }
 
@@ -56,9 +56,8 @@
       text-shadow: 2px 2px 0 black;
     }
 
-    #restart {
+    #restart, #menuBtn {
       position: absolute;
-      top: 10%;
       left: 50%;
       transform: translate(-50%, -50%);
       padding: 10px 20px;
@@ -71,7 +70,10 @@
       display: none;
       font-family: 'Press Start 2P', cursive;
     }
-    #restart:hover { background: #ff6666; }
+
+    #restart:hover, #menuBtn:hover { background: #ff6666; }
+    #restart { top: 10%; }
+    #menuBtn { top: 18%; }
 
     /* ✅ Modal Overlay */
     #instructionModal {
@@ -167,6 +169,41 @@
       height: 100%; background: rgba(255,0,0,0.6);
       width: 0%; transition: width 0.2s linear;
     }
+
+    /* ✅ Map Selection */
+    #mapSelect {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    #mapCards {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .mapCard {
+      background: #222;
+      border: 4px solid white;
+      box-shadow: 0 0 10px yellow;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .mapCard:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px red;
+    }
+    .mapCard img {
+      width: 200px;
+      height: 120px;
+      display: block;
+    }
+    .mapCard span {
+      display: block;
+      padding: 10px;
+      font-size: 10px;
+      color: yellow;
+      text-shadow: 1px 1px 0 black;
+    }
   </style>
 </head>
 <body>
@@ -177,11 +214,28 @@
     <button id="instructionBtn">INSTRUCTIONS</button>
   </div>
 
+  <!-- ✅ Map Selection -->
+  <div id="mapSelect">
+    <h1>Select a Map</h1>
+    <div id="mapCards">
+      <div class="mapCard" data-map="map1.png">
+        <img src="map1.png" alt="Map 1"><span>Map 1</span>
+      </div>
+      <div class="mapCard" data-map="map2.png">
+        <img src="map2.png" alt="Map 2"><span>Map 2</span>
+      </div>
+      <div class="mapCard" data-map="map3.png">
+        <img src="map3.png" alt="Map 3"><span>Map 3</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ✅ Game Container -->
   <div id="gameContainer" style="display:none; position:relative;">
     <canvas id="arena" width="600" height="600"></canvas>
     <div id="result"></div>
     <button id="restart">Restart</button>
+    <button id="menuBtn">Go to Menu</button>
     <div id="countdown"></div>
 
     <!-- ✅ Skill Display HUD -->
@@ -214,21 +268,47 @@
 
   <script>
     const home = document.getElementById("home");
+    const mapSelect = document.getElementById("mapSelect");
     const gameContainer = document.getElementById("gameContainer");
     const startBtn = document.getElementById("startBtn");
     const instructionBtn = document.getElementById("instructionBtn");
     const instructionModal = document.getElementById("instructionModal");
     const closeBtn = document.querySelector(".closeBtn");
     const countdownEl = document.getElementById("countdown");
+    const menuBtn = document.getElementById("menuBtn");
+
+    let selectedMap = "bg.png";
 
     startBtn.addEventListener("click", () => {
       home.style.display = "none";
-      gameContainer.style.display = "block";
-      startGame();
+      mapSelect.style.display = "flex";
     });
+
+    document.querySelectorAll(".mapCard").forEach(card => {
+      card.addEventListener("click", () => {
+        selectedMap = card.dataset.map;
+        document.body.style.background = `url(${selectedMap}) no-repeat center center fixed`;
+        document.body.style.backgroundSize = "cover";
+        mapSelect.style.display = "none";
+        gameContainer.style.display = "block";
+        startGame();
+      });
+    });
+
     instructionBtn.addEventListener("click", () => instructionModal.style.display = "flex");
     closeBtn.addEventListener("click", () => instructionModal.style.display = "none");
 
+    menuBtn.addEventListener("click", () => {
+      gameContainer.style.display = "none";
+      home.style.display = "block";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("restart").style.display = "none";
+      menuBtn.style.display = "none";
+      document.body.style.background = `url('bg.png') no-repeat center center fixed`;
+      document.body.style.backgroundSize = "cover";
+    });
+
+    // ✅ EXISTING startGame() function remains untouched below
     function startGame() {
       const canvas = document.getElementById('arena');
       const ctx = canvas.getContext('2d');
@@ -236,7 +316,7 @@
       const restartBtn = document.getElementById('restart');
 
       const arenaCenter = { x: canvas.width / 2, y: canvas.height / 2 };
-      const arenaRadius = canvas.width / 2 - 20;
+      const arenaRadius = canvas.width / 2 - 10;
 
       const redImg = new Image(); redImg.src = "red.png";
       const blueImg = new Image(); blueImg.src = "blue.png";
@@ -246,7 +326,6 @@
       const tornadoImg = new Image(); tornadoImg.src = "tord.png";
       const dashImg = new Image(); dashImg.src = "dash.png";
 
-      // 🔹 Pixel Spark effect
       let sparks = [];
       function createSparks(x, y, color) {
         for (let i = 0; i < 8; i++) {
@@ -263,7 +342,7 @@
         sparks.forEach((s, i) => {
           ctx.fillStyle = s.color;
           ctx.globalAlpha = s.life / 20;
-          ctx.fillRect(s.x, s.y, 3, 3); // ✅ pixel sparks
+          ctx.fillRect(s.x, s.y, 3, 3);
           ctx.globalAlpha = 1.0;
           s.x += s.dx;
           s.y += s.dy;
@@ -283,7 +362,7 @@
           this.dashCooldown = false; this.shieldCooldown = false;
           this.ultimateCharge = 0;
           this.trail = [];
-          this.prefix = prefix; // ✅ for HUD link
+          this.prefix = prefix;
         }
         move(keys) {
           this.dy = keys[this.controls.up] ? -this.speed : keys[this.controls.down] ? this.speed : 0;
@@ -318,7 +397,6 @@
           setTimeout(() => this.ultimateActive = false, 3000);
         }
         draw() {
-          // 🔹 Dash trail
           this.trail.forEach((t, i) => {
             ctx.globalAlpha = t.life / 15;
             ctx.drawImage(dashImg, t.x - 30, t.y - 30, 60, 60);
@@ -407,7 +485,9 @@
         if (bey1.health <= 0 || bey2.health <= 0) {
           gameOver = true;
           result.innerText = bey1.health > bey2.health ? "🔥 Red Player Wins!" : "💧 Blue Player Wins!";
-          result.style.display = "block"; restartBtn.style.display = "block";
+          result.style.display = "block"; 
+          restartBtn.style.display = "block"; 
+          menuBtn.style.display = "block";
         } else requestAnimationFrame(gameLoop);
       }
 
@@ -419,6 +499,7 @@
         bey1.ultimateActive = bey2.ultimateActive = false;
         gameOver = false;
         result.style.display = "none"; restartBtn.style.display = "none";
+        menuBtn.style.display = "none";
         startCountdown(() => gameLoop());
       });
 
