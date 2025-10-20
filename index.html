@@ -219,13 +219,13 @@
     <h1>Select a Map</h1>
     <div id="mapCards">
       <div class="mapCard" data-map="map1.png">
-        <img src="map1.png" alt="Map 1"><span>Map 1</span>
+        <img src="map1.png" alt="Map 1"><span style="color: red;">VULCAN</span>
       </div>
       <div class="mapCard" data-map="map2.png">
-        <img src="map2.png" alt="Map 2"><span>Map 2</span>
+        <img src="map2.png" alt="Map 2"><span style="color: rgb(2, 255, 2);">JUNGLE</span>
       </div>
       <div class="mapCard" data-map="map3.png">
-        <img src="map3.png" alt="Map 3"><span>Map 3</span>
+        <img src="map3.png" alt="Map 3"><span style="color: rgb(0, 238, 255);">GALAXY</span>
       </div>
     </div>
   </div>
@@ -257,392 +257,437 @@
   <div id="instructionModal">
     <div class="modal-content">
       <h2>🎮 INSTRUCTIONS</h2>
-      <p>- <span style="color:red;">Red Player</span>: Move = WASD<br>
-         Dash = Space, Shield = C, Ultimate = V</p>
-      <p>- <span style="color:cyan;">Blue Player</span>: Move = Arrow Keys<br>
-         Dash = ., Shield = /, Ultimate = shift</p>
-      <p>⚔️ Knock your opponent’s health to 0 to win!</p>
+      <p>- <span style="color:red;">Red Player</span>: Movement = <span style="color: rgb(255, 91, 14);">WASD</span><br>
+         Dash = <span style="color: rgb(255, 91, 14);">Space</span>, Shield = <span style="color: rgb(255, 91, 14);">C</span>, Ultimate = <span style="color: rgb(255, 91, 14);">V</span></p>
+      <p>- <span style="color:cyan;">Blue Player</span>: Movement = <span style="color:rgb(0, 136, 255);">Arrow Keys</span><br>
+         Dash = <span style="color:rgb(0, 136, 255);">.</span>, Shield = <span style="color:rgb(0, 136, 255);">/</span>, Ultimate = <span style="color:rgb(0, 136, 255);">shift</span></p>
+      <p>⚔️ Knock your opponent’s health to <span style="color:red;">0</span> to win!⚔️</p>
+      <p>⚔️ To activate your <span style="color: red;">ULTIMATE</span> u need to full your ENERGY bar⚔️</p>
       <button class="closeBtn">CLOSE</button>
     </div>
   </div>
 
   <script>
-    const home = document.getElementById("home");
-    const mapSelect = document.getElementById("mapSelect");
-    const gameContainer = document.getElementById("gameContainer");
-    const startBtn = document.getElementById("startBtn");
-    const instructionBtn = document.getElementById("instructionBtn");
-    const instructionModal = document.getElementById("instructionModal");
-    const closeBtn = document.querySelector(".closeBtn");
-    const countdownEl = document.getElementById("countdown");
-    const menuBtn = document.getElementById("menuBtn");
+    const home = document.getElementById("home");
+    const mapSelect = document.getElementById("mapSelect");
+    const gameContainer = document.getElementById("gameContainer");
+    const startBtn = document.getElementById("startBtn");
+    const instructionBtn = document.getElementById("instructionBtn");
+    const instructionModal = document.getElementById("instructionModal");
+    const closeBtn = document.querySelector(".closeBtn");
+    const countdownEl = document.getElementById("countdown");
+    const menuBtn = document.getElementById("menuBtn");
 
-    let selectedMap = "bg.png";
-    let animationId = null; // ✅ Store the animation frame ID
-    let gameActive = false; // ✅ Flag to control movement/physics
+    let selectedMap = "bg.png";
+    let animationId = null; // ✅ Store the animation frame ID
+    let gameActive = false; // ✅ Flag to control movement/physics
 
-    startBtn.addEventListener("click", () => {
-      home.style.display = "none";
-      mapSelect.style.display = "flex";
-    });
+    startBtn.addEventListener("click", () => {
+      home.style.display = "none";
+      mapSelect.style.display = "flex";
+    });
 
-    document.querySelectorAll(".mapCard").forEach(card => {
-      card.addEventListener("click", () => {
-        selectedMap = card.dataset.map;
-        document.body.style.background = `url(${selectedMap}) no-repeat center center fixed`;
-        document.body.style.backgroundSize = "cover";
-        mapSelect.style.display = "none";
-        gameContainer.style.display = "block";
-        startGame();
-      });
-    });
+    document.querySelectorAll(".mapCard").forEach(card => {
+      card.addEventListener("click", () => {
+        selectedMap = card.dataset.map;
+        document.body.style.background = `url(${selectedMap}) no-repeat center center fixed`;
+        document.body.style.backgroundSize = "cover";
+        mapSelect.style.display = "none";
+        gameContainer.style.display = "block";
+        startGame();
+      });
+    });
 
-    instructionBtn.addEventListener("click", () => instructionModal.style.display = "flex");
-    closeBtn.addEventListener("click", () => instructionModal.style.display = "none");
+    instructionBtn.addEventListener("click", () => instructionModal.style.display = "flex");
+    closeBtn.addEventListener("click", () => instructionModal.style.display = "none");
 
-    menuBtn.addEventListener("click", () => {
-      // Stop the current game loop before going to the menu
-      if (animationId) cancelAnimationFrame(animationId);
+    menuBtn.addEventListener("click", () => {
+      // Stop the current game loop before going to the menu
+      if (animationId) cancelAnimationFrame(animationId);
 
-      gameContainer.style.display = "none";
-      home.style.display = "block";
-      document.getElementById("result").style.display = "none";
-      document.getElementById("restart").style.display = "none";
-      menuBtn.style.display = "none";
-      document.body.style.background = `url('bg.png') no-repeat center center fixed`;
-      document.body.style.backgroundSize = "cover";
-    });
+      gameContainer.style.display = "none";
+      home.style.display = "block";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("restart").style.display = "none";
+      menuBtn.style.display = "none";
+      document.body.style.background = `url('bg.png') no-repeat center center fixed`;
+      document.body.style.backgroundSize = "cover";
+    });
 
 
-    function startGame() {
-      // ✅ 1. Always stop any existing game loop before starting a new one!
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
+    function startGame() {
+      // ✅ 1. Always stop any existing game loop before starting a new one!
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
 
-      const canvas = document.getElementById('arena');
-      const ctx = canvas.getContext('2d');
-      const result = document.getElementById('result');
-      const restartBtn = document.getElementById('restart');
+      const canvas = document.getElementById('arena');
+      const ctx = canvas.getContext('2d');
+      const result = document.getElementById('result');
+      const restartBtn = document.getElementById('restart');
 
-      const arenaCenter = { x: canvas.width / 2, y: canvas.height / 2 };
-      const arenaRadius = canvas.width / 2 - 10;
+      const arenaCenter = { x: canvas.width / 2, y: canvas.height / 2 };
+      const arenaRadius = canvas.width / 2 - 10;
 
-      // ✅ Spinning Images
-      const redImg = new Image(); redImg.src = "red.png";
-      const blueImg = new Image(); blueImg.src = "blue.png";
+      // ✅ Spinning Images
+      const redImg = new Image(); redImg.src = "red.png";
+      const blueImg = new Image(); blueImg.src = "blue.png";
 
-      // ✅ Defeated Images
-      const defRedImg = new Image(); defRedImg.src = "def-red.png";
-      const defBlueImg = new Image(); defBlueImg.src = "def-blue.png";
+      // ✅ Defeated Images
+      const defRedImg = new Image(); defRedImg.src = "def-red.png";
+      const defBlueImg = new Image(); defBlueImg.src = "def-blue.png";
 
-      // Load skill effect images
-      const shieldImg = new Image(); shieldImg.src = "shield.png";
-      // UPDATED: Load separate ultimate images
-      const redUltImg = new Image(); redUltImg.src = "red-ult.png";
-      const blueUltImg = new Image(); blueUltImg.src = "blue-ult.png";
-      const dashImg = new Image(); dashImg.src = "dash.png";
+      // Load skill effect images
+      const shieldImg = new Image(); shieldImg.src = "shield.png";
+      // 🟢 CORRECTED: Load ultimate images using the provided filenames
+      const redUltImg = new Image(); redUltImg.src = "red-tords.png";
+      const blueUltImg = new Image(); blueUltImg.src = "blue-tords.png";
+      const dashImg = new Image(); dashImg.src = "dash.png";
 
-      let sparks = [];
-      function createSparks(x, y, color) {
-        for (let i = 0; i < 50; i++) {
-          sparks.push({
-            x, y,
-            dx: (Math.random() - 0.5) * 10,
-            dy: (Math.random() - 0.5) * 10,
-            life: 20,
-            color
-          });
-        }
-      }
-      function drawSparks(ctx) {
-        sparks.forEach((s, i) => {
-          ctx.fillStyle = s.color;
-          ctx.globalAlpha = s.life / 20;
-          ctx.fillRect(s.x, s.y, 3, 3);
-          ctx.globalAlpha = 1.0;
-          s.x += s.dx;
-          s.y += s.dy;
-          s.life--;
-          if (s.life <= 0) sparks.splice(i, 1);
-        });
-      }
+      let sparks = [];
+      function createSparks(x, y, color) {
+        for (let i = 0; i < 50; i++) {
+          sparks.push({
+            x, y,
+            dx: (Math.random() - 0.5) * 10,
+            dy: (Math.random() - 0.5) * 10,
+            life: 20,
+            color
+          });
+        }
+      }
+      function drawSparks(ctx) {
+        sparks.forEach((s, i) => {
+          ctx.fillStyle = s.color;
+          ctx.globalAlpha = s.life / 20;
+          ctx.fillRect(s.x, s.y, 3, 3);
+          ctx.globalAlpha = 1.0;
+          s.x += s.dx;
+          s.y += s.dy;
+          s.life--;
+          if (s.life <= 0) sparks.splice(i, 1);
+        });
+      }
 
-      class Beyblade {
-        constructor(x, y, color, spinImg, defImg, controls, dashKey, shieldKey, ultimateKey, prefix, ultImg) {
-          this.x = x; this.y = y; this.color = color;
-            this.spinImg = spinImg;
-            this.defImg = defImg;
-          this.radius = 50; this.health = 100; this.speed = 3;
-          this.controls = controls; this.dashKey = dashKey;
-          this.shieldKey = shieldKey; this.ultimateKey = ultimateKey;
-          this.dx = 0; this.dy = 0;
-          this.dashActive = false; this.shieldActive = false; this.ultimateActive = false;
-          this.dashCooldown = false; this.shieldCooldown = false;
-          this.ultimateCharge = 0;
-          this.trail = [];
-          this.prefix = prefix;
-          // UPDATED: Store the unique ultimate image
-          this.ultImg = ultImg;
+      class Beyblade {
+        constructor(x, y, color, spinImg, defImg, controls, dashKey, shieldKey, ultimateKey, prefix, ultImg) {
+          this.x = x; this.y = y; this.color = color;
+            this.spinImg = spinImg;
+            this.defImg = defImg;
+          this.radius = 50; this.health = 100; this.speed = 3;
+          this.controls = controls; this.dashKey = dashKey;
+          this.shieldKey = shieldKey; this.ultimateKey = ultimateKey;
+          this.dx = 0; this.dy = 0;
+          this.dashActive = false; this.shieldActive = false; this.ultimateActive = false;
+          this.dashCooldown = false; this.shieldCooldown = false;
+          this.ultimateCharge = 0;
+          this.trail = [];
+          this.prefix = prefix;
+          // UPDATED: Store the unique ultimate image
+          this.ultImg = ultImg;
 
-          // Animation properties
-          this.frame = 0;
-          this.frameWidth = 110;
-          this.frameHeight = 110;
-          this.frameCount = 4; // Only 4 spinning frames (0, 1, 2, 3)
-          this.isDefeated = false;
-        }
+          // Animation properties
+          this.frame = 0;
+          this.frameWidth = 110;
+          this.frameHeight = 110;
+          this.frameCount = 4; // Only 4 spinning frames (0, 1, 2, 3)
+          this.isDefeated = false;
+          
+          // ✅ NEW: Ultimate Animation properties (2000x500 sprite, 4 frames -> 500x500 each)
+          this.ultFrame = 0;
+          this.ultFrameWidth = 500;
+          this.ultFrameHeight = 500;
+          this.ultFrameCount = 4;
+        }
 
-        move(keys) {
-          // ✅ 2. Only allow movement if the game is globally active (after countdown)
-          if (this.isDefeated || !gameActive) return;
-          this.dy = keys[this.controls.up] ? -this.speed : keys[this.controls.down] ? this.speed : 0;
-          this.dx = keys[this.controls.left] ? -this.speed : keys[this.controls.right] ? this.speed : 0;
-          this.x += this.dx; this.y += this.dy;
-          const dx = this.x - arenaCenter.x, dy = this.y - arenaCenter.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist + this.radius > arenaRadius) {
-            const angle = Math.atan2(dy, dx);
-            this.x = arenaCenter.x + Math.cos(angle) * (arenaRadius - this.radius);
-            this.y = arenaCenter.y + Math.sin(angle) * (arenaRadius - this.radius);
-          }
-          if (keys[this.dashKey] && !this.dashActive && !this.dashCooldown) this.activateDash();
-          if (keys[this.shieldKey] && !this.shieldActive && !this.shieldCooldown) this.activateShield();
-          if (keys[this.ultimateKey] && this.ultimateCharge >= 100 && !this.ultimateActive) this.activateUltimate();
-        }
+        move(keys) {
+          // ✅ 2. Only allow movement if the game is globally active (after countdown)
+          if (this.isDefeated || !gameActive) return;
+          this.dy = keys[this.controls.up] ? -this.speed : keys[this.controls.down] ? this.speed : 0;
+          this.dx = keys[this.controls.left] ? -this.speed : keys[this.controls.right] ? this.speed : 0;
+          this.x += this.dx; this.y += this.dy;
+          const dx = this.x - arenaCenter.x, dy = this.y - arenaCenter.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist + this.radius > arenaRadius) {
+            const angle = Math.atan2(dy, dx);
+            this.x = arenaCenter.x + Math.cos(angle) * (arenaRadius - this.radius);
+            this.y = arenaCenter.y + Math.sin(angle) * (arenaRadius - this.radius);
+          }
+          if (keys[this.dashKey] && !this.dashActive && !this.dashCooldown) this.activateDash();
+          if (keys[this.shieldKey] && !this.shieldActive && !this.shieldCooldown) this.activateShield();
+          if (keys[this.ultimateKey] && this.ultimateCharge >= 100 && !this.ultimateActive) this.activateUltimate();
+        }
 
-        activateDash() {
-          this.dashActive = true; this.dashCooldown = true;
-          const angle = Math.atan2(this.dy, this.dx) || Math.random() * Math.PI * 2;
-          this.x += Math.cos(angle) * 80; this.y += Math.sin(angle) * 80;
-          this.trail.push({x: this.x, y: this.y, life: 15});
-          setTimeout(() => this.dashActive = false, 300);
-          setTimeout(() => this.dashCooldown = false, 4000);
-        }
+        activateDash() {
+          this.dashActive = true; this.dashCooldown = true;
+          const angle = Math.atan2(this.dy, this.dx) || Math.random() * Math.PI * 2;
+          this.x += Math.cos(angle) * 80; this.y += Math.sin(angle) * 80;
+          this.trail.push({x: this.x, y: this.y, life: 15});
+          setTimeout(() => this.dashActive = false, 300);
+          setTimeout(() => this.dashCooldown = false, 4000);
+        }
 
-        activateShield() {
-          this.shieldActive = true; this.shieldCooldown = true;
-          setTimeout(() => this.shieldActive = false, 2000);
-          setTimeout(() => this.shieldCooldown = false, 6000);
-        }
+        activateShield() {
+          this.shieldActive = true; this.shieldCooldown = true;
+          setTimeout(() => this.shieldActive = false, 2000);
+          setTimeout(() => this.shieldCooldown = false, 6000);
+        }
 
-        activateUltimate() {
-          this.ultimateActive = true; this.ultimateCharge = 0;
-          setTimeout(() => this.ultimateActive = false, 3000);
-        }
+        activateUltimate() {
+          this.ultimateActive = true; this.ultimateCharge = 0;
+          this.ultFrame = 0; // Reset ultimate frame on activation
+          setTimeout(() => this.ultimateActive = false, 3000);
+        }
+        
+        // ✅ NEW: Ultimate Frame Update method
+        updateUltFrame() {
+            if (this.ultimateActive) {
+                this.ultFrame = (this.ultFrame + 1) % this.ultFrameCount;
+            }
+        }
 
-        draw() {
-          // Only draw dash trail if not defeated
-          if (!this.isDefeated) {
-            this.trail.forEach((t, i) => {
-              ctx.globalAlpha = t.life / 15;
-              ctx.drawImage(dashImg, t.x - 30, t.y - 30, 60, 60);
-              ctx.globalAlpha = 1.0;
-              t.life--;
-              if (t.life <= 0) this.trail.splice(i, 1);
-            });
-          }
+        draw() {
+          // Only draw dash trail if not defeated
+          if (!this.isDefeated) {
+            this.trail.forEach((t, i) => {
+              ctx.globalAlpha = t.life / 15;
+              ctx.drawImage(dashImg, t.x - 30, t.y - 30, 60, 60);
+              ctx.globalAlpha = 1.0;
+              t.life--;
+              if (t.life <= 0) this.trail.splice(i, 1);
+            });
+          }
 
-          // 🔹 Beyblade drawing
-          if (this.isDefeated) {
-            // Draw the separate static defeated image
-            ctx.drawImage(
-              this.defImg,
-              this.x - this.radius,
-              this.y - this.radius,
-              this.radius * 2,
-              this.radius * 2
-            );
-          } else {
-            // Draw the spinning sprite from the sheet
-            ctx.drawImage(
-              this.spinImg,
-              this.frame * this.frameWidth,
-              0,
-              this.frameWidth,
-              this.frameHeight,
-              this.x - this.radius,
-              this.y - this.radius,
-              this.radius * 2,
-              this.radius * 2
-            );
-          }
+          // 🔹 Beyblade drawing
+          if (this.isDefeated) {
+            // Draw the separate static defeated image
+            ctx.drawImage(
+              this.defImg,
+              this.x - this.radius,
+              this.y - this.radius,
+              this.radius * 2,
+              this.radius * 2
+            );
+          } else {
+            // Draw the spinning sprite from the sheet
+            ctx.drawImage(
+              this.spinImg,
+              this.frame * this.frameWidth,
+              0,
+              this.frameWidth,
+              this.frameHeight,
+              this.x - this.radius,
+              this.y - this.radius,
+              this.radius * 2,
+              this.radius * 2
+            );
+          }
 
-          // 🔹 Shield (CENTERED)
-          if (this.shieldActive && !this.isDefeated) {
-            ctx.save();
-            ctx.globalAlpha = 0.7;
-            const shieldSize = this.radius * 2.5; // Use this to calculate top-left corner
-            ctx.drawImage(shieldImg, this.x - shieldSize / 2, this.y - shieldSize / 2, shieldSize, shieldSize); // CENTERED
-            ctx.restore();
-          }
+          // 🔹 Shield (CENTERED)
+          if (this.shieldActive && !this.isDefeated) {
+            ctx.save();
+            ctx.globalAlpha = 0.7;
+            const shieldSize = this.radius * 2.5; // Use this to calculate top-left corner
+            ctx.drawImage(shieldImg, this.x - shieldSize / 2, this.y - shieldSize / 2, shieldSize, shieldSize); // CENTERED
+            ctx.restore();
+          }
 
-          // 🔹 Ultimate (Effect)
-          if (this.ultimateActive && !this.isDefeated) {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.globalAlpha = 0.8;
-            const ultSize = this.radius * 4;
-            // UPDATED: Draw unique ultimate image
-            ctx.drawImage(this.ultImg, -ultSize / 2, -ultSize / 2, ultSize, ultSize);
-            ctx.restore();
-          }
+          // 🔹 Ultimate (Effect) - NOW ANIMATED
+          if (this.ultimateActive && !this.isDefeated) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.globalAlpha = 0.8;
+            const ultSize = this.radius * 4;
+            // UPDATED: Draw unique ultimate image using the ultFrame
+            ctx.drawImage(
+                this.ultImg,
+                this.ultFrame * this.ultFrameWidth, // Source X: Select the current frame
+                0, // Source Y
+                this.ultFrameWidth, // Source Width
+                this.ultFrameHeight, // Source Height
+                -ultSize / 2, // Destination X (centered)
+                -ultSize / 2, // Destination Y (centered)
+                ultSize, // Destination Width
+                ultSize // Destination Height
+            );
+            ctx.restore();
+          }
 
-          // 🔹 Health + charge bars
-          ctx.fillStyle = "red"; ctx.fillRect(this.x - 25, this.y - 40, 50, 5);
-          ctx.fillStyle = "lime"; ctx.fillRect(this.x - 25, this.y - 40, (this.health / 100) * 50, 5);
+          // 🔹 Health + charge bars
+          ctx.fillStyle = "red"; ctx.fillRect(this.x - 25, this.y - 40, 50, 5);
+          ctx.fillStyle = "lime"; ctx.fillRect(this.x - 25, this.y - 40, (this.health / 100) * 50, 5);
 
-          // Only draw ultimate charge if not defeated
-          if (!this.isDefeated) {
-            ctx.fillStyle = "gray"; ctx.fillRect(this.x - 25, this.y + 35, 50, 5);
-            ctx.fillStyle = "gold"; ctx.fillRect(this.x - 25, this.y + 35, (this.ultimateCharge / 100) * 50, 5);
-          }
+          // Only draw ultimate charge if not defeated
+          if (!this.isDefeated) {
+            ctx.fillStyle = "gray"; ctx.fillRect(this.x - 25, this.y + 35, 50, 5);
+            ctx.fillStyle = "gold"; ctx.fillRect(this.x - 25, this.y + 35, (this.ultimateCharge / 100) * 50, 5);
+          }
 
-          // Update HUD bars
-          document.getElementById(this.prefix+"DashCD").style.width = this.dashCooldown && !this.isDefeated ? "100%" : "0%";
-          document.getElementById(this.prefix+"ShieldCD").style.width = this.shieldCooldown && !this.isDefeated ? "100%" : "0%";
-          document.getElementById(this.prefix+"UltCD").style.width = this.ultimateCharge < 100 && !this.isDefeated ? "100%" : "0%";
-        }
-      }
+          // Update HUD bars
+          document.getElementById(this.prefix+"DashCD").style.width = this.dashCooldown && !this.isDefeated ? "100%" : "0%";
+          document.getElementById(this.prefix+"ShieldCD").style.width = this.shieldCooldown && !this.isDefeated ? "100%" : "0%";
+          document.getElementById(this.prefix+"UltCD").style.width = this.ultimateCharge < 100 && !this.isDefeated ? "100%" : "0%";
+        }
+      }
 
-      // UPDATED: Pass the correct ultimate image to each Beyblade
-      const bey1 = new Beyblade(250, 300, "red", redImg, defRedImg,
-        { up: "w", down: "s", left: "a", right: "d" }, "x", "c", "v", "red", redUltImg);
-      const bey2 = new Beyblade(350, 300, "blue", blueImg, defBlueImg,
-        { up: "arrowup", down: "arrowdown", left: "arrowleft", right: "arrowright" }, ".", "/", "shift", "blue", blueUltImg);
+      // 🟢 CORRECTED: Instantiate Beyblades with the correct ultimate image sources
+      // NOTE: Dash key for Red Player is set to 'x' instead of 'space' due to a common browser issue with 'space' for movement.
+      const bey1 = new Beyblade(250, 300, "red", redImg, defRedImg,
+        { up: "w", down: "s", left: "a", right: "d" }, "x", "c", "v", "red", redUltImg);
+      const bey2 = new Beyblade(350, 300, "blue", blueImg, defBlueImg,
+        { up: "arrowup", down: "arrowdown", left: "arrowleft", right: "arrowright" }, ".", "/", "shift", "blue", blueUltImg);
 
-      let keys = {};
-      document.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
-      document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+      let keys = {};
+      document.addEventListener("keydown", e => {
+        // Correcting Red Dash key from "Space" to "x" in the code as instructed
+        const key = e.key.toLowerCase() === ' ' ? 'x' : e.key.toLowerCase();
+        keys[key] = true
+      });
+      document.addEventListener("keyup", e => {
+        const key = e.key.toLowerCase() === ' ' ? 'x' : e.key.toLowerCase();
+        keys[key] = false
+      });
 
-      function detectCollision(b1, b2) {
-        if (b1.isDefeated || b2.isDefeated || !gameActive) return; // ✅ Locked by gameActive
-        const dx = b1.x - b2.x, dy = b1.y - b2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+      function detectCollision(b1, b2) {
+        if (b1.isDefeated || b2.isDefeated || !gameActive) return; // ✅ Locked by gameActive
+        const dx = b1.x - b2.x, dy = b1.y - b2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Core Collision Detection
-        if (dist < b1.radius + b2.radius) {
-          if (!b1.shieldActive) b1.health -= b2.dashActive ? 2 : 0.5;
-          if (!b2.shieldActive) b2.health -= b1.dashActive ? 2 : 0.5;
-          b1.ultimateCharge = Math.min(100, b1.ultimateCharge + 2);
-          b2.ultimateCharge = Math.min(100, b2.ultimateCharge + 2);
-          const angle = Math.atan2(dy, dx), push = 2;
-          b1.x += Math.cos(angle) * push; b1.y += Math.sin(angle) * push;
-          b2.x -= Math.cos(angle) * push; b2.y -= Math.sin(angle) * push;
-          createSparks((b1.x + b2.x) / 2, (b1.y + b2.y) / 2, "yellow");
-        }
+        // Core Collision Detection
+        if (dist < b1.radius + b2.radius) {
+          if (!b1.shieldActive) b1.health -= b2.dashActive ? 2 : 0.5;
+          if (!b2.shieldActive) b2.health -= b1.dashActive ? 2 : 0.5;
+          b1.ultimateCharge = Math.min(100, b1.ultimateCharge + 2);
+          b2.ultimateCharge = Math.min(100, b2.ultimateCharge + 2);
+          const angle = Math.atan2(dy, dx), push = 2;
+          b1.x += Math.cos(angle) * push; b1.y += Math.sin(angle) * push;
+          b2.x -= Math.cos(angle) * push; b2.y -= Math.sin(angle) * push;
+          createSparks((b1.x + b2.x) / 2, (b1.y + b2.y) / 2, "yellow");
+        }
 
-        // 💥 ULTIMATE EFFECT LOGIC 💥
-        const tornadoRange = 150; // Range of the ultimate effect
+        // 💥 ULTIMATE EFFECT LOGIC 💥
+        const tornadoRange = 150; // Range of the ultimate effect
 
-        // Player 1 Ultimate on Player 2
-        if (b1.ultimateActive && dist < tornadoRange) {
-          if (!b2.shieldActive) b2.health -= 0.5; // Damage Over Time
-          // Pull Player 2 towards Player 1
-          const angle = Math.atan2(b2.y - b1.y, b2.x - b1.x);
-          b2.x -= Math.cos(angle) * 2;
-          b2.y -= Math.sin(angle) * 2;
-        }
+        // Player 1 Ultimate on Player 2
+        if (b1.ultimateActive && dist < tornadoRange) {
+          if (!b2.shieldActive) b2.health -= 0.5; // Damage Over Time
+          // Pull Player 2 towards Player 1
+          const angle = Math.atan2(b2.y - b1.y, b2.x - b1.x);
+          b2.x -= Math.cos(angle) * 2;
+          b2.y -= Math.sin(angle) * 2;
+        }
 
-        // Player 2 Ultimate on Player 1
-        if (b2.ultimateActive && dist < tornadoRange) {
-          if (!b1.shieldActive) b1.health -= 0.5; // Damage Over Time
-          // Pull Player 1 towards Player 2
-          const angle = Math.atan2(b1.y - b2.y, b1.x - b2.x);
-          b1.x -= Math.cos(angle) * 2;
-          b1.y -= Math.sin(angle) * 2;
-        }
-      }
+        // Player 2 Ultimate on Player 1
+        if (b2.ultimateActive && dist < tornadoRange) {
+          if (!b1.shieldActive) b1.health -= 0.5; // Damage Over Time
+          // Pull Player 1 towards Player 2
+          const angle = Math.atan2(b1.y - b2.y, b1.x - b2.x);
+          b1.x -= Math.cos(angle) * 2;
+          b1.y -= Math.sin(angle) * 2;
+        }
+      }
 
-      let gameOver = false;
-      let animationCounter = 0;
+      let gameOver = false;
+      let animationCounter = 0;
+      let ultimateAnimationCounter = 0; // ✅ Counter for ultimate animation
 
-      function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawSparks(ctx);
+      function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawSparks(ctx);
 
-        if (gameActive && !gameOver) { // ✅ Only run physics/movement if active
-          bey1.move(keys); bey2.move(keys); detectCollision(bey1, bey2);
-        }
+        if (gameActive && !gameOver) { // ✅ Only run physics/movement if active
+          bey1.move(keys); bey2.move(keys); detectCollision(bey1, bey2);
+        }
 
-        bey1.draw(); bey2.draw();
+        bey1.draw(); bey2.draw();
 
-        // Animation update logic: Only spin the non-defeated players and if game is active
-        animationCounter++;
-        if (animationCounter % 5 === 0) {
-          if (!bey1.isDefeated) bey1.frame = (bey1.frame + 1) % bey1.frameCount;
-          if (!bey2.isDefeated) bey2.frame = (bey2.frame + 1) % bey2.frameCount;
-          animationCounter = 0;
-        }
+        // Animation update logic: Only spin the non-defeated players and if game is active
+        animationCounter++;
+        ultimateAnimationCounter++; // ✅ Increment ultimate animation counter
+        
+        if (animationCounter % 5 === 0) {
+          if (!bey1.isDefeated) bey1.frame = (bey1.frame + 1) % bey1.frameCount;
+          if (!bey2.isDefeated) bey2.frame = (bey2.frame + 1) % bey2.frameCount;
+          animationCounter = 0;
+        }
 
-        if (!gameOver && (bey1.health <= 0 || bey2.health <= 0)) {
-          gameOver = true;
-          gameActive = false; // ✅ Stop movement when game is over
+        // ✅ NEW: Update ultimate frame at a different speed (e.g., every 3 frames of the main loop)
+        if (ultimateAnimationCounter % 3 === 0) {
+            bey1.updateUltFrame();
+            bey2.updateUltFrame();
+            ultimateAnimationCounter = 0;
+        }
 
-          if (bey1.health <= 0) {
-            bey1.isDefeated = true;
-            result.innerText = "💧 Blue Player Wins!";
-          } else { // bey2.health <= 0
-            bey2.isDefeated = true;
-            result.innerText = "🔥 Red Player Wins!";
-          }
 
-          result.style.display = "block";
-          restartBtn.style.display = "block";
-          menuBtn.style.display = "block";
-        }
+        if (!gameOver && (bey1.health <= 0 || bey2.health <= 0)) {
+          gameOver = true;
+          gameActive = false; // ✅ Stop movement when game is over
 
-        animationId = requestAnimationFrame(gameLoop); // ✅ Store the ID
-      }
+          if (bey1.health <= 0) {
+            bey1.isDefeated = true;
+            result.innerText = "💧 Blue Player Wins!";
+          } else { // bey2.health <= 0
+            bey2.isDefeated = true;
+            result.innerText = "🔥 Red Player Wins!";
+          }
 
-      restartBtn.addEventListener("click", () => {
-        // Reset game state variables
-        bey1.x = 250; bey1.y = 300; bey1.health = 100; bey1.ultimateCharge = 0;
-        bey2.x = 350; bey2.y = 300; bey2.health = 100; bey2.ultimateCharge = 0;
-        bey1.dashActive = bey2.dashActive = false;
-        bey1.shieldActive = bey2.shieldActive = false;
-        bey1.ultimateActive = bey2.ultimateActive = false;
-        // Reset cooldowns
-        bey1.dashCooldown = bey2.dashCooldown = false;
-        bey1.shieldCooldown = bey2.shieldCooldown = false;
+          result.style.display = "block";
+          restartBtn.style.display = "block";
+          menuBtn.style.display = "block";
+        }
 
-        bey1.isDefeated = bey2.isDefeated = false;
-        bey1.frame = bey2.frame = 0;
+        animationId = requestAnimationFrame(gameLoop); // ✅ Store the ID
+      }
 
-        gameOver = false;
-        gameActive = false; // ✅ Important: Lock movement before countdown
+      restartBtn.addEventListener("click", () => {
+        // Reset game state variables
+        bey1.x = 250; bey1.y = 300; bey1.health = 100; bey1.ultimateCharge = 0;
+        bey2.x = 350; bey2.y = 300; bey2.health = 100; bey2.ultimateCharge = 0;
+        bey1.dashActive = bey2.dashActive = false;
+        bey1.shieldActive = bey2.shieldActive = false;
+        bey1.ultimateActive = bey2.ultimateActive = false;
+        // Reset cooldowns
+        bey1.dashCooldown = bey2.dashCooldown = false;
+        bey1.shieldCooldown = bey2.shieldCooldown = false;
 
-        result.style.display = "none"; restartBtn.style.display = "none";
-        menuBtn.style.display = "none";
-        startCountdown(() => {
-          gameActive = true; // ✅ Release movement/physics after countdown
-        });
-        // The game loop is already running, so we don't need to call gameLoop() here.
-      });
+        bey1.isDefeated = bey2.isDefeated = false;
+        bey1.frame = bey2.frame = 0;
+        bey1.ultFrame = bey2.ultFrame = 0; // Reset ultimate frame on restart
 
-      function startCountdown(callback) {
-        let count = 3;
-        countdownEl.style.display = "block";
-        countdownEl.innerText = count;
-        const interval = setInterval(() => {
-          count--;
-          if (count > 0) countdownEl.innerText = count;
-          else if (count === 0) countdownEl.innerText = "GO!";
-          else {
-            clearInterval(interval);
-            countdownEl.style.display = "none";
-            callback();
-          }
-        }, 1000);
-      }
+        gameOver = false;
+        gameActive = false; // ✅ Important: Lock movement before countdown
 
-      startCountdown(() => {
-        gameActive = true; // Set active after initial countdown
-        gameLoop(); // Start the first loop
-      });
-    }
-  </script>
+        result.style.display = "none"; restartBtn.style.display = "none";
+        menuBtn.style.display = "none";
+        startCountdown(() => {
+          gameActive = true; // ✅ Release movement/physics after countdown
+        });
+        // The game loop is already running, so we don't need to call gameLoop() here.
+      });
+
+      function startCountdown(callback) {
+        let count = 3;
+        countdownEl.style.display = "block";
+        countdownEl.innerText = count;
+        const interval = setInterval(() => {
+          count--;
+          if (count > 0) countdownEl.innerText = count;
+          else if (count === 0) countdownEl.innerText = "GO!";
+          else {
+            clearInterval(interval);
+            countdownEl.style.display = "none";
+            callback();
+          }
+        }, 1000);
+      }
+
+      startCountdown(() => {
+        gameActive = true; // Set active after initial countdown
+        gameLoop(); // Start the first loop
+      });
+    }
+  </script>
 </body>
 </html>
 
