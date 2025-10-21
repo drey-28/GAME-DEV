@@ -258,7 +258,7 @@
     <div class="modal-content">
       <h2>🎮 INSTRUCTIONS</h2>
       <p>- <span style="color:red;">Red Player</span>: Movement = <span style="color: rgb(255, 91, 14);">WASD</span><br>
-         Dash = <span style="color: rgb(255, 91, 14);">Space</span>, Shield = <span style="color: rgb(255, 91, 14);">C</span>, Ultimate = <span style="color: rgb(255, 91, 14);">V</span></p>
+         Dash = <span style="color: rgb(255, 91, 14);">E</span>, Shield = <span style="color: rgb(255, 91, 14);">C</span>, Ultimate = <span style="color: rgb(255, 91, 14);">V</span></p>
       <p>- <span style="color:cyan;">Blue Player</span>: Movement = <span style="color:rgb(0, 136, 255);">Arrow Keys</span><br>
          Dash = <span style="color:rgb(0, 136, 255);">.</span>, Shield = <span style="color:rgb(0, 136, 255);">/</span>, Ultimate = <span style="color:rgb(0, 136, 255);">shift</span></p>
       <p>⚔️ Knock your opponent’s health to <span style="color:red;">0</span> to win!⚔️</p>
@@ -534,7 +534,7 @@
       // 🟢 CORRECTED: Instantiate Beyblades with the correct ultimate image sources
       // NOTE: Dash key for Red Player is set to 'x' instead of 'space' due to a common browser issue with 'space' for movement.
       const bey1 = new Beyblade(250, 300, "red", redImg, defRedImg,
-        { up: "w", down: "s", left: "a", right: "d" }, "x", "c", "v", "red", redUltImg);
+        { up: "w", down: "s", left: "a", right: "d" }, "e", "c", "v", "red", redUltImg);
       const bey2 = new Beyblade(350, 300, "blue", blueImg, defBlueImg,
         { up: "arrowup", down: "arrowdown", left: "arrowleft", right: "arrowright" }, ".", "/", "shift", "blue", blueUltImg);
 
@@ -690,5 +690,6 @@
   </script>
 </body>
 </html>
+
 
 
